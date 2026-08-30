@@ -117,10 +117,11 @@ const config: Config = {
       },
     },
     navbar: {
-      title: 'Hermes Agent',
+      title: 'Tampinha Agent',
       logo: {
-        alt: 'Hermes Agent',
+        alt: 'Tampinha Agent',
         src: 'img/logo.png',
+        srcDark: 'img/logo-dark.png',
       },
       items: [
         {
