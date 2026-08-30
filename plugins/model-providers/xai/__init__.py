@@ -1,6 +1,6 @@
 """xAI (Grok) provider profile."""
 
-from hermes_cli import __version__ as _HERMES_VERSION
+from tampinha_cli import __version__ as _TAMPINHA_VERSION
 from providers import register_provider
 from providers.base import ProviderProfile
 
@@ -11,7 +11,7 @@ xai = ProviderProfile(
     env_vars=("XAI_API_KEY",),
     base_url="https://api.x.ai/v1",
     auth_type="api_key",
-    default_headers={"User-Agent": f"Hermes-Agent/{_HERMES_VERSION}"},
+    default_headers={"User-Agent": f"Tampinha-Agent/{_TAMPINHA_VERSION}"},
 )
 
 register_provider(xai)

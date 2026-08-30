@@ -1,0 +1,4 @@
+[console_scripts]
+tampinha = tampinha_cli.main:main
+tampinha-acp = acp_adapter.entry:main
+tampinha-agent = run_agent:main

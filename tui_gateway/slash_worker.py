@@ -4,17 +4,17 @@ Protocol: reads JSON lines from stdin {id, command}, writes {id, ok, output|erro
 """
 
 # Stop a ``utils/`` (or ``proxy/``, ``ui/``) package in the launch directory
-# from shadowing Hermes's own top-level modules.  This worker is spawned as
+# from shadowing Tampinha's own top-level modules.  This worker is spawned as
 # ``-m tui_gateway.slash_worker`` and inherits the user's CWD, so the ``import
 # cli`` below would otherwise resolve ``utils`` to a colliding local package
-# and crash the child in a retry loop (issue #51286).  ``hermes_bootstrap``
+# and crash the child in a retry loop (issue #51286).  ``tampinha_bootstrap``
 # lives at the repo root, so importing it is safe before the guard runs (its
 # name won't collide with a user package), and it owns the canonical
 # path-hardening logic shared with the other entry points — #51693 added the
 # guard to ``entry.py``/``acp_adapter/entry.py`` but missed this child.
-import hermes_bootstrap
+import tampinha_bootstrap
 
-hermes_bootstrap.harden_import_path()
+tampinha_bootstrap.harden_import_path()
 
 import argparse
 import contextlib
@@ -35,7 +35,7 @@ from rich.console import Console
 def _env_float(name: str, default: float) -> float:
     """Parse a float env knob, falling back to ``default`` on absent/malformed
     values. A bare ``float(os.environ.get(...))`` would raise ValueError at
-    import time on a typo (e.g. ``HERMES_SLASH_WATCHDOG_POLL_S=2s``) and kill
+    import time on a typo (e.g. ``TAMPINHA_SLASH_WATCHDOG_POLL_S=2s``) and kill
     the worker before it can serve a single command."""
     raw = os.environ.get(name)
     if not raw:
@@ -46,8 +46,8 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
-_WATCHDOG_POLL_S = max(0.05, _env_float("HERMES_SLASH_WATCHDOG_POLL_S", 2.0))
-_ORPHAN_GRACE_S = max(0.0, _env_float("HERMES_SLASH_WATCHDOG_GRACE_S", 5.0))
+_WATCHDOG_POLL_S = max(0.05, _env_float("TAMPINHA_SLASH_WATCHDOG_POLL_S", 2.0))
+_ORPHAN_GRACE_S = max(0.0, _env_float("TAMPINHA_SLASH_WATCHDOG_GRACE_S", 5.0))
 _in_flight = threading.Event()  # set while a command is executing
 logger = logging.getLogger(__name__)
 
@@ -60,12 +60,12 @@ def _is_orphaned(original_ppid, getppid=os.getppid) -> bool:
 def _prepare_slash_worker_runtime() -> None:
     """Start bounded MCP discovery before HermesCLI snapshots tools.
 
-    Each slash_worker child is its own process — the parent ``hermes serve``
+    Each slash_worker child is its own process — the parent ``tampinha serve``
     discovery thread does not populate this registry (issue #61891).
     """
     import logging
 
-    from hermes_cli.mcp_startup import (
+    from tampinha_cli.mcp_startup import (
         start_background_mcp_discovery,
         wait_for_mcp_discovery,
     )
@@ -131,8 +131,8 @@ def main():
     p.add_argument("--model", default="")
     args = p.parse_args()
 
-    os.environ["HERMES_SESSION_KEY"] = args.session_key
-    os.environ["HERMES_INTERACTIVE"] = "1"
+    os.environ["TAMPINHA_SESSION_KEY"] = args.session_key
+    os.environ["TAMPINHA_INTERACTIVE"] = "1"
 
     # Start before the (hundreds-of-ms) HermesCLI build — that window is itself
     # an orphan risk if the gateway dies mid-spawn.
@@ -179,7 +179,7 @@ def main():
             # the same command boundary as other long-lived gateway processes.
             # trim_memory's shared cooldown coalesces this with nearby activity.
             try:
-                from hermes_cli.mem_trim import trim_memory
+                from tampinha_cli.mem_trim import trim_memory
 
                 trim_memory(reason="slash worker command completion")
             except Exception as exc:

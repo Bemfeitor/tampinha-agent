@@ -1,1 +1,1 @@
-# Hermes plugins package
+# Tampinha plugins package

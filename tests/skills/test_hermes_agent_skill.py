@@ -1,12 +1,12 @@
-"""The `hermes-agent` skill is what a running Hermes knows about itself.
+"""The `tampinha-agent` skill is what a running Tampinha knows about itself.
 
-`website/` is never packaged, so an installed Hermes has no local copy of the
-user guide; skills ARE synced into `$HERMES_HOME/skills/`. The skill therefore
+`website/` is never packaged, so an installed Tampinha has no local copy of the
+user guide; skills ARE synced into `$TAMPINHA_HOME/skills/`. The skill therefore
 does not try to restate the product — it routes to the published `llms.txt`,
 which is generated from the docs tree on every build and so can never be behind
 the feature set. These tests keep that routing honest: the index has to be where
 the skill says it is, and every reference has to be reachable, otherwise a
-shipped feature is invisible and the agent answers "Hermes can't do that."
+shipped feature is invisible and the agent answers "Tampinha can't do that."
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
-SKILL_DIR = REPO / "skills" / "autonomous-ai-agents" / "hermes-agent"
+SKILL_DIR = REPO / "skills" / "autonomous-ai-agents" / "tampinha-agent"
 SKILL_MD = SKILL_DIR / "SKILL.md"
 GENERATOR = REPO / "website" / "scripts" / "generate-llms-txt.py"
 

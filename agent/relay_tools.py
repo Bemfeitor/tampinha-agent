@@ -1,4 +1,4 @@
-"""Core NeMo Relay adapter for Hermes tool execution."""
+"""Core NeMo Relay adapter for Tampinha tool execution."""
 
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def execute(
         ):
             logger.warning(
                 "NeMo Relay tool post-processing failed after dispatch success; "
-                "returning the Hermes tool result",
+                "returning the Tampinha tool result",
                 exc_info=True,
             )
             return raw_result["value"], observed_args

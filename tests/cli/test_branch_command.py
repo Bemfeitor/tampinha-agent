@@ -20,10 +20,10 @@ import pytest
 @pytest.fixture
 def session_db(tmp_path):
     """Create a real SessionDB for testing."""
-    os.environ["HERMES_HOME"] = str(tmp_path / ".hermes")
-    os.makedirs(tmp_path / ".hermes", exist_ok=True)
-    from hermes_state import SessionDB
-    db = SessionDB(db_path=tmp_path / ".hermes" / "test_sessions.db")
+    os.environ["TAMPINHA_HOME"] = str(tmp_path / ".tampinha")
+    os.makedirs(tmp_path / ".tampinha", exist_ok=True)
+    from tampinha_state import SessionDB
+    db = SessionDB(db_path=tmp_path / ".tampinha" / "test_sessions.db")
     yield db
     db.close()
 
@@ -153,14 +153,14 @@ class TestBranchCommandDef:
 
     def test_branch_in_registry(self):
         """The branch command should be in the command registry."""
-        from hermes_cli.commands import COMMAND_REGISTRY
+        from tampinha_cli.commands import COMMAND_REGISTRY
         names = [c.name for c in COMMAND_REGISTRY]
         assert "branch" in names
 
 
     def test_branch_in_session_category(self):
         """The branch command should be in the Session category."""
-        from hermes_cli.commands import COMMAND_REGISTRY
+        from tampinha_cli.commands import COMMAND_REGISTRY
         branch = next(c for c in COMMAND_REGISTRY if c.name == "branch")
         assert branch.category == "Session"
 

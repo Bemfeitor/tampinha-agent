@@ -25,15 +25,15 @@ import pytest
 
 
 @pytest.fixture
-def hermes_home(tmp_path, monkeypatch):
-    """Isolated HERMES_HOME so SessionDB.state_meta writes stay hermetic."""
-    home = tmp_path / ".hermes"
+def tampinha_home(tmp_path, monkeypatch):
+    """Isolated TAMPINHA_HOME so SessionDB.state_meta writes stay hermetic."""
+    home = tmp_path / ".tampinha"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
-    monkeypatch.setenv("HERMES_HOME", str(home))
+    monkeypatch.setenv("TAMPINHA_HOME", str(home))
 
-    # Bust the goal module's DB cache so it re-resolves HERMES_HOME each test.
-    from hermes_cli import goals
+    # Bust the goal module's DB cache so it re-resolves TAMPINHA_HOME each test.
+    from tampinha_cli import goals
     goals._DB_CACHE.clear()
     yield home
     goals._DB_CACHE.clear()
@@ -42,7 +42,7 @@ def hermes_home(tmp_path, monkeypatch):
 def _make_cli_with_goal(session_id: str, goal_text: str = "build a thing"):
     """Build a minimal HermesCLI stub with an active goal wired in."""
     from cli import HermesCLI
-    from hermes_cli.goals import GoalManager
+    from tampinha_cli.goals import GoalManager
 
     cli = HermesCLI.__new__(HermesCLI)
     # State the hook + helpers touch directly.
@@ -68,7 +68,7 @@ def _make_cli_with_goal(session_id: str, goal_text: str = "build a thing"):
 
 class TestInterruptAutoPause:
 
-    def test_interrupted_turn_is_resumable(self, hermes_home):
+    def test_interrupted_turn_is_resumable(self, tampinha_home):
         """After auto-pause from Ctrl+C, /goal resume puts it back to active."""
         sid = f"sid-resume-{uuid.uuid4().hex}"
         cli, mgr = _make_cli_with_goal(sid)
@@ -76,7 +76,7 @@ class TestInterruptAutoPause:
         cli.conversation_history = [
             {"role": "assistant", "content": "partial"},
         ]
-        with patch("hermes_cli.goals.judge_goal"):
+        with patch("tampinha_cli.goals.judge_goal"):
             cli._maybe_continue_goal_after_turn()
         assert mgr.state.status == "paused"
 
@@ -88,7 +88,7 @@ class TestInterruptAutoPause:
 
 class TestHealthyTurnStillRuns:
     def test_clean_response_enqueues_continuation_when_judge_says_continue(
-        self, hermes_home,
+        self, tampinha_home,
     ):
         """Sanity check: the hook still works in the happy path."""
         sid = f"sid-healthy-{uuid.uuid4().hex}"
@@ -101,7 +101,7 @@ class TestHealthyTurnStillRuns:
 
         # Force the judge to say "continue" without touching the network.
         with patch(
-            "hermes_cli.goals.judge_goal",
+            "tampinha_cli.goals.judge_goal",
             return_value=("continue", "needs more steps", False, None, False),
         ):
             cli._maybe_continue_goal_after_turn()
@@ -112,7 +112,7 @@ class TestHealthyTurnStillRuns:
         assert "Continuing toward your standing goal" in queued
         assert mgr.state.status == "active"
 
-    def test_clean_response_marks_done_when_judge_says_done(self, hermes_home):
+    def test_clean_response_marks_done_when_judge_says_done(self, tampinha_home):
         sid = f"sid-done-{uuid.uuid4().hex}"
         cli, mgr = _make_cli_with_goal(sid)
         cli._last_turn_interrupted = False
@@ -121,7 +121,7 @@ class TestHealthyTurnStillRuns:
         ]
 
         with patch(
-            "hermes_cli.goals.judge_goal",
+            "tampinha_cli.goals.judge_goal",
             return_value=("done", "goal satisfied", False, None, False),
         ):
             cli._maybe_continue_goal_after_turn()
@@ -131,7 +131,7 @@ class TestHealthyTurnStillRuns:
 
 
 class TestInterruptFlagLifecycle:
-    def test_chat_resets_flag_at_entry(self, hermes_home):
+    def test_chat_resets_flag_at_entry(self, tampinha_home):
         """chat() must reset _last_turn_interrupted at the top of each turn.
 
         This guards against stale flag state: if turn N was interrupted and

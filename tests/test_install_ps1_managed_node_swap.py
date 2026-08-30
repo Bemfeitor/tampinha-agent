@@ -51,7 +51,7 @@ def test_managed_node_swap_defines_staged_and_backup_as_siblings() -> None:
     )
 
 
-def test_managed_node_swap_renames_stay_within_hermes_home() -> None:
+def test_managed_node_swap_renames_stay_within_tampinha_home() -> None:
     swap = _swap_block()
 
     renames = re.findall(

@@ -35,7 +35,7 @@ pytest.importorskip("mcp.client.auth.oauth2", reason="MCP SDK 1.26.0+ required")
 
 
 @pytest.mark.asyncio
-async def test_hermes_provider_forwards_asend_values(tmp_path, monkeypatch):
+async def test_tampinha_provider_forwards_asend_values(tmp_path, monkeypatch):
     """The wrapper MUST forward ``.asend(response)`` into the inner generator.
 
     This is the primary regression test. With the broken wrapper, the inner
@@ -52,11 +52,11 @@ async def test_hermes_provider_forwards_asend_values(tmp_path, monkeypatch):
     from pydantic import AnyUrl
 
     from tools.mcp_oauth import HermesTokenStorage
-    from tools.mcp_oauth_manager import _HERMES_PROVIDER_CLS, reset_manager_for_tests
+    from tools.mcp_oauth_manager import _TAMPINHA_PROVIDER_CLS, reset_manager_for_tests
 
-    assert _HERMES_PROVIDER_CLS is not None, "SDK OAuth types must be available"
+    assert _TAMPINHA_PROVIDER_CLS is not None, "SDK OAuth types must be available"
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("TAMPINHA_HOME", str(tmp_path))
     reset_manager_for_tests()
 
     # Seed a valid-looking token so the SDK's _initialize loads something and
@@ -86,9 +86,9 @@ async def test_hermes_provider_forwards_asend_values(tmp_path, monkeypatch):
 
     metadata = OAuthClientMetadata(
         redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-        client_name="Hermes Agent",
+        client_name="Tampinha Agent",
     )
-    provider = _HERMES_PROVIDER_CLS(
+    provider = _TAMPINHA_PROVIDER_CLS(
         server_name="srv",
         server_url="https://example.com/mcp",
         client_metadata=metadata,
@@ -120,7 +120,7 @@ async def test_hermes_provider_forwards_asend_values(tmp_path, monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_hermes_provider_forwards_401_triggers_refresh(tmp_path, monkeypatch):
+async def test_tampinha_provider_forwards_401_triggers_refresh(tmp_path, monkeypatch):
     """A 401 response MUST flow into the inner generator and trigger the
     SDK's 401 recovery branch.
 
@@ -138,11 +138,11 @@ async def test_hermes_provider_forwards_401_triggers_refresh(tmp_path, monkeypat
     from pydantic import AnyUrl
 
     from tools.mcp_oauth import HermesTokenStorage
-    from tools.mcp_oauth_manager import _HERMES_PROVIDER_CLS, reset_manager_for_tests
+    from tools.mcp_oauth_manager import _TAMPINHA_PROVIDER_CLS, reset_manager_for_tests
 
-    assert _HERMES_PROVIDER_CLS is not None
+    assert _TAMPINHA_PROVIDER_CLS is not None
 
-    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    monkeypatch.setenv("TAMPINHA_HOME", str(tmp_path))
     reset_manager_for_tests()
 
     storage = HermesTokenStorage("srv")
@@ -166,9 +166,9 @@ async def test_hermes_provider_forwards_401_triggers_refresh(tmp_path, monkeypat
 
     metadata = OAuthClientMetadata(
         redirect_uris=[AnyUrl("http://127.0.0.1:12345/callback")],
-        client_name="Hermes Agent",
+        client_name="Tampinha Agent",
     )
-    provider = _HERMES_PROVIDER_CLS(
+    provider = _TAMPINHA_PROVIDER_CLS(
         server_name="srv",
         server_url="https://example.com/mcp",
         client_metadata=metadata,

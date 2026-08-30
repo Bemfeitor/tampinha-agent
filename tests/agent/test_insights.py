@@ -4,7 +4,7 @@ import sqlite3
 import time
 import pytest
 
-from hermes_state import SessionDB
+from tampinha_state import SessionDB
 from agent.insights import (
     InsightsEngine,
     _estimate_cost,
@@ -534,7 +534,7 @@ class TestTerminalFormatting:
         report = engine.generate(days=30)
         text = engine.format_terminal(report)
 
-        assert "Hermes Insights" in text
+        assert "Tampinha Insights" in text
         assert "Overview" in text
         assert "Models Used" in text
         assert "Top Tools" in text
